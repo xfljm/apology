@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>对不起，宝贝</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe Script', 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0, #a18cd1, #fbc2eb);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            text-align: center;
+            max-width: 90%;
+            padding: 20px;
+            z-index: 10;
+            margin: 0 auto;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+            font-family: 'Segoe Script', 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .message {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            font-family: 'Segoe Script', 'Comic Sans MS', cursive, sans-serif;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 动态书写效果 */
+        .typewriter-line {
+            margin: 10px 0;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .typewriter-char {
+            opacity: 0;
+            display: inline-block;
+            animation: fadeIn 0.3s forwards;
+        }
+        
+        .heart-char {
+            animation: heartbeat 1.5s infinite;
+            display: inline-block;
+        }
+        
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: orange; }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .heart {
+            font-size: 3rem;
+            color: #ff6b6b;
+            animation: heartbeat 1.5s infinite;
+            display: inline-block;
+            margin: 0 10px;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .button {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 20px 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        #startButton {
+            margin: 20px auto;
+            display: block;
+        }
+
+        /* 音乐播放器样式 - 右上角 */
+        .music-player {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 光盘样式 */
+        .disc {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4e54c8, #8f94fb);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            animation: rotate 20s linear infinite;
+            animation-play-state: running;
+        }
+
+        .disc.paused {
+            animation-play-state: paused;
+        }
+
+        .disc::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #fff;
+            z-index: 2;
+        }
+
+        .disc::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #333;
+            z-index: 1;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .play-pause-btn {
+            margin-top: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        /* H5样式适配 */
+        @media (max-width: 768px) {
+            .music-player {
+                top: 10px;
+                right: 10px;
+            }
+            
+            .disc {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .disc::before {
+                width: 15px;
+                height: 15px;
+            }
+            
+            .disc::after {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .play-pause-btn {
+                font-size: 0.7rem;
+                padding: 3px 8px;
+            }
+        }
+
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart-float {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(255, 107, 107, 0.7);
+            animation: float 5s linear infinite;
+            user-select: none;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .signature {
+            font-size: 1.8rem;
+            margin-top: 30px;
+            font-style: italic;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            font-family: 'Segoe Script', 'Comic Sans MS', cursive, sans-serif;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        .date {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .message {
+                font-size: 1rem;
+                padding: 15px;
+            }
+            
+            .signature {
+                font-size: 1.5rem;
+            }
+            
+            .date {
+                font-size: 1rem;
+            }
+            
+            .disc {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .music-player {
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.8rem;
+            }
+            
+            .message {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+            
+            .signature {
+                font-size: 1.3rem;
+            }
+            
+            .disc {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts-container" id="hearts-container"></div>
+    
+    <!-- 音乐播放器 - 右上角 -->
+    <div class="music-player">
+        <div class="disc" id="disc"></div>
+        <button class="play-pause-btn" id="playPauseBtn">暂停</button>
+    </div>
+    
+    <div class="container">
+        <h1 class="title">亲爱的宝贝</h1>
+        
+        <button class="button" id="startButton">开始我的心意</button>
+        
+        <div class="message">
+            <p class="typewriter-line"><span class="typewriter-char" style="--char-delay: 0.1s;">我</span><span class="typewriter-char" style="--char-delay: 0.2s;">知</span><span class="typewriter-char" style="--char-delay: 0.3s;">道</span><span class="typewriter-char" style="--char-delay: 0.4s;">8</span><span class="typewriter-char" style="--char-delay: 0.5s;">月</span><span class="typewriter-char" style="--char-delay: 0.6s;">2</span><span class="typewriter-char" style="--char-delay: 0.7s;">9</span><span class="typewriter-char" style="--char-delay: 0.8s;">日</span><span class="typewriter-char" style="--char-delay: 0.9s;">那</span><span class="typewriter-char" style="--char-delay: 1.0s;">天</span><span class="typewriter-char" style="--char-delay: 1.1s;">，</span><span class="typewriter-char" style="--char-delay: 1.2s;">你</span><span class="typewriter-char" style="--char-delay: 1.3s;">因</span><span class="typewriter-char" style="--char-delay: 1.4s;">为</span><span class="typewriter-char" style="--char-delay: 1.5s;">工</span><span class="typewriter-char" style="--char-delay: 1.6s;">作</span><span class="typewriter-char" style="--char-delay: 1.7s;">上</span><span class="typewriter-char" style="--char-delay: 1.8s;">的</span><span class="typewriter-char" style="--char-delay: 1.9s;">事</span><span class="typewriter-char" style="--char-delay: 2.0s;">情</span><span class="typewriter-char" style="--char-delay: 2.1s;">不</span><span class="typewriter-char" style="--char-delay: 2.2s;">开</span><span class="typewriter-char" style="--char-delay: 2.3s;">心</span></p>
+            <p class="typewriter-line"><span class="typewriter-char" style="--char-delay: 0.1s;">而</span><span class="typewriter-char" style="--char-delay: 0.2s;">我</span><span class="typewriter-char" style="--char-delay: 0.3s;">却</span><span class="typewriter-char" style="--char-delay: 0.4s;">没</span><span class="typewriter-char" style="--char-delay: 0.5s;">有</span><span class="typewriter-char" style="--char-delay: 0.6s;">好</span><span class="typewriter-char" style="--char-delay: 0.7s;">好</span><span class="typewriter-char" style="--char-delay: 0.8s;">安</span><span class="typewriter-char" style="--char-delay: 0.9s;">慰</span><span class="typewriter-char" style="--char-delay: 1.0s;">你</span></p>
+            <p class="typewriter-line"><span class="typewriter-char" style="--char-delay: 0.1s;">我</span><span class="typewriter-char" style="--char-delay: 0.2s;">想</span><span class="typewriter-char" style="--char-delay: 0.3s;">对</span><span class="typewriter-char" style="--char-delay: 0.4s;">你</span><span class="typewriter-char" style="--char-delay: 0.5s;">说</span><span class="typewriter-char" style="--char-delay: 0.6s;">：</span><span class="typewriter-char heart-char" style="--char-delay: 0.7s;">❤️</span><span class="typewriter-char" style="--char-delay: 0.8s;">对</span><span class="typewriter-char" style="--char-delay: 0.9s;">不</span><span class="typewriter-char" style="--char-delay: 1.0s;">起</span><span class="typewriter-char heart-char" style="--char-delay: 1.1s;">❤️</span></p>
+            <p class="typewriter-line"><span class="typewriter-char" style="--char-delay: 0.1s;">你</span><span class="typewriter-char" style="--char-delay: 0.2s;">的</span><span class="typewriter-char" style="--char-delay: 0.3s;">感</span><span class="typewriter-char" style="--char-delay: 0.4s;">受</span><span class="typewriter-char" style="--char-delay: 0.5s;">对</span><span class="typewriter-char" style="--char-delay: 0.6s;">我</span><span class="typewriter-char" style="--char-delay: 0.7s;">很</span><span class="typewriter-char" style="--char-delay: 0.8s;">重</span><span class="typewriter-char" style="--char-delay: 0.9s;">要</span></p>
+            <p class="typewriter-line"><span class="typewriter-char" style="--char-delay: 0.1s;">我</span><span class="typewriter-char" style="--char-delay: 0.2s;">应</span><span class="typewriter-char" style="--char-delay: 0.3s;">该</span><span class="typewriter-char" style="--char-delay: 0.4s;">在</span><span class="typewriter-char" style="--char-delay: 0.5s;">你</span><span class="typewriter-char" style="--char-delay: 0.6s;">需</span><span class="typewriter-char" style="--char-delay: 0.7s;">要</span><span class="typewriter-char" style="--char-delay: 0.8s;">我</span><span class="typewriter-char" style="--char-delay: 0.9s;">的</span><span class="typewriter-char" style="--char-delay: 1.0s;">时</span><span class="typewriter-char" style="--char-delay: 1.1s;">候</span><span class="typewriter-char" style="--char-delay: 1.2s;">陪</span><span class="typewriter-char" style="--char-delay: 1.3s;">伴</span><span class="typewriter-char" style="--char-delay: 1.4s;">你</span></p>
+            <p class="typewriter-line"><span class="typewriter-char" style="--char-delay: 0.1s;">而</span><span class="typewriter-char" style="--char-delay: 0.2s;">不</span><span class="typewriter-char" style="--char-delay: 0.3s;">是</span><span class="typewriter-char" style="--char-delay: 0.4s;">忽</span><span class="typewriter-char" style="--char-delay: 0.5s;">视</span><span class="typewriter-char" style="--char-delay: 0.6s;">你</span><span class="typewriter-char" style="--char-delay: 0.7s;">的</span><span class="typewriter-char" style="--char-delay: 0.8s;">情</span><span class="typewriter-char" style="--char-delay: 0.9s;">绪</span></p>
+            <p class="typewriter-line"><span class="typewriter-char" style="--char-delay: 0.1s;">你</span><span class="typewriter-char" style="--char-delay: 0.2s;">是</span><span class="typewriter-char" style="--char-delay: 0.3s;">我</span><span class="typewriter-char" style="--char-delay: 0.4s;">最</span><span class="typewriter-char" style="--char-delay: 0.5s;">重</span><span class="typewriter-char" style="--char-delay: 0.6s;">要</span><span class="typewriter-char" style="--char-delay: 0.7s;">的</span><span class="typewriter-char" style="--char-delay: 0.8s;">人</span></p>
+            <p class="typewriter-line"><span class="typewriter-char" style="--char-delay: 0.1s;">我</span><span class="typewriter-char" style="--char-delay: 0.2s;">会</span><span class="typewriter-char" style="--char-delay: 0.3s;">努</span><span class="typewriter-char" style="--char-delay: 0.4s;">力</span><span class="typewriter-char" style="--char-delay: 0.5s;">成</span><span class="typewriter-char" style="--char-delay: 0.6s;">为</span><span class="typewriter-char" style="--char-delay: 0.7s;">一</span><span class="typewriter-char" style="--char-delay: 0.8s;">个</span><span class="typewriter-char" style="--char-delay: 0.9s;">更</span><span class="typewriter-char" style="--char-delay: 1.0s;">好</span><span class="typewriter-char" style="--char-delay: 1.1s;">的</span><span class="typewriter-char" style="--char-delay: 1.2s;">老</span><span class="typewriter-char" style="--char-delay: 1.3s;">公</span></p>
+            <p class="typewriter-line"><span class="typewriter-char" style="--char-delay: 0.1s;">给</span><span class="typewriter-char" style="--char-delay: 0.2s;">你</span><span class="typewriter-char" style="--char-delay: 0.3s;">更</span><span class="typewriter-char" style="--char-delay: 0.4s;">多</span><span class="typewriter-char" style="--char-delay: 0.5s;">的</span><span class="typewriter-char" style="--char-delay: 0.6s;">关</span><span class="typewriter-char" style="--char-delay: 0.7s;">心</span><span class="typewriter-char" style="--char-delay: 0.8s;">和</span><span class="typewriter-char" style="--char-delay: 0.9s;">爱</span><span class="typewriter-char" style="--char-delay: 1.0s;">护</span></p>
+            <p class="typewriter-line"><span class="typewriter-char" style="--char-delay: 0.1s;">请</span><span class="typewriter-char" style="--char-delay: 0.2s;">原</span><span class="typewriter-char" style="--char-delay: 0.3s;">谅</span><span class="typewriter-char" style="--char-delay: 0.4s;">我</span><span class="typewriter-char" style="--char-delay: 0.5s;">的</span><span class="typewriter-char" style="--char-delay: 0.6s;">疏</span><span class="typewriter-char" style="--char-delay: 0.7s;">忽</span></p>
+            <p class="typewriter-line"><span class="typewriter-char" style="--char-delay: 0.1s;">给</span><span class="typewriter-char" style="--char-delay: 0.2s;">我</span><span class="typewriter-char" style="--char-delay: 0.3s;">一</span><span class="typewriter-char" style="--char-delay: 0.4s;">个</span><span class="typewriter-char" style="--char-delay: 0.5s;">机</span><span class="typewriter-char" style="--char-delay: 0.6s;">会</span><span class="typewriter-char" style="--char-delay: 0.7s;">来</span><span class="typewriter-char" style="--char-delay: 0.8s;">弥</span><span class="typewriter-char" style="--char-delay: 0.9s;">补</span></p>
+            <p class="typewriter-line"><span class="typewriter-char" style="--char-delay: 0.1s;">让</span><span class="typewriter-char" style="--char-delay: 0.2s;">我</span><span class="typewriter-char" style="--char-delay: 0.3s;">用</span><span class="typewriter-char" style="--char-delay: 0.4s;">行</span><span class="typewriter-char" style="--char-delay: 0.5s;">动</span><span class="typewriter-char" style="--char-delay: 0.6s;">证</span><span class="typewriter-char" style="--char-delay: 0.7s;">明</span><span class="typewriter-char" style="--char-delay: 0.8s;">我</span><span class="typewriter-char" style="--char-delay: 0.9s;">对</span><span class="typewriter-char" style="--char-delay: 1.0s;">你</span><span class="typewriter-char" style="--char-delay: 1.1s;">的</span><span class="typewriter-char" style="--char-delay: 1.2s;">爱</span></p>
+        </div>
+        
+        <div class="signature" id="signature">
+            <p>永远爱你的</p>
+            <p>[xiaofei]</p>
+        </div>
+        
+        <div class="date" id="date">
+            <p>2025年8月30日</p>
+        </div>
+    </div>
+    
+    <!-- 音频元素 -->
+    <audio id="background-music" loop>
+        <source src="https://m701.music.126.net/20250830160741/849efeebfe1831bcaa3baa0d5e507bfa/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/28481678614/2094/46e7/24de/730c852430e4dbf18323701b1e5a49b6.mp3?vuutv=6Gzp0pv5pxipoLxU3ZT00NE1No8u3kd2wEygvdwxwxj8vk6oQ/o1Nptb4kxtCHydQpqca1qQNt+m4iccsFa89Dep7yQBB2vFYMeL94Dx1e3xI8yHtMAOjOEUDcAsSL1Hv1C70ouRUyeoGfUw+L7nG9Ny7nTDAH9+eaaL9L7YCSSqCnGhY78zo75VODQQCZuw5XFkkuFF7WYz8DhjpV2Q7VmWamAJ8gHI4qgB3FXsPSkresVhMaWXrNory1nkF2FcdAE1mSOcfKVhKY8akeTWfU4KoC4iqsX8x7XbNm5Vywcx/iLaWXln9h9CUCWsnjHmLzc2OQHVAuwnxVnJNQ7JPdWBOhL/vbfHj4HHD/OaMvI2ZlKE7E7PJWppoQwo2T47&cdntag=bWFyaz1vc193ZWIscXVhbGl0eV9leGhpZ2g" type="audio/mpeg">
+        您的浏览器不支持音频元素。
+    </audio>
+
+    <script>
+        // 创建飘动的心形
+        function createHearts() {
+            const container = document.getElementById('hearts-container');
+            const hearts = ['❤️', '💖', '💘', '💕', '💞', '💓', '💗', '🫀'];
+            
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'heart-float';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                
+                // 随机位置和大小
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.fontSize = (Math.random() * 2 + 1) + 'rem';
+                heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                
+                container.appendChild(heart);
+                
+                // 移除心形元素以避免内存泄漏
+                setTimeout(() => {
+                    heart.remove();
+                }, 5000);
+            }, 300);
+        }
+        
+        // 创建特殊的心形效果
+        function createSpecialHeart() {
+            const container = document.getElementById('hearts-container');
+            const heart = document.createElement('div');
+            heart.className = 'heart-float';
+            heart.textContent = '❤️';
+            
+            // 随机位置和大小
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 3 + 2) + 'rem';
+            heart.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            heart.style.color = '#ff6b6b';
+            
+            container.appendChild(heart);
+            
+            // 移除心形元素
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+
+        // 音乐控制
+        const music = document.getElementById('background-music');
+        const disc = document.getElementById('disc');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        let isPlaying = true;
+
+        // 播放/暂停切换
+        function togglePlayPause() {
+            if (isPlaying) {
+                music.pause();
+                disc.classList.add('paused');
+                playPauseBtn.textContent = '播放';
+                isPlaying = false;
+            } else {
+                music.play().catch(error => {
+                    console.log('播放被阻止:', error);
+                    alert('请手动点击播放按钮以播放音乐');
+                });
+                disc.classList.remove('paused');
+                playPauseBtn.textContent = '暂停';
+                isPlaying = true;
+            }
+        }
+
+        // 点击光盘或按钮切换播放状态
+        disc.addEventListener('click', togglePlayPause);
+        playPauseBtn.addEventListener('click', togglePlayPause);
+
+        // 页面加载完成后开始创建心形
+        window.addEventListener('load', function() {
+            createHearts();
+            
+            // 隐藏所有打字机效果
+            const typewriterLines = document.querySelectorAll('.typewriter-line');
+            typewriterLines.forEach(line => {
+                line.style.opacity = '0';
+            });
+            
+            // 隐藏签名和日期
+            document.getElementById('signature').style.opacity = '0';
+            document.getElementById('date').style.opacity = '0';
+        });
+        
+        // 开始按钮点击事件
+        document.getElementById('startButton').addEventListener('click', function() {
+            this.style.display = 'none';
+            
+            // 显示所有打字机效果
+            const typewriterLines = document.querySelectorAll('.typewriter-line');
+            typewriterLines.forEach((line, lineIndex) => {
+                // 显示行
+                setTimeout(() => {
+                    line.style.opacity = '1';
+                    
+                    // 逐字显示
+                    const chars = line.querySelectorAll('.typewriter-char');
+                    chars.forEach(char => {
+                        const delay = parseFloat(char.style.getPropertyValue('--char-delay')) || 0;
+                        char.style.animation = `fadeIn 0.3s forwards`;
+                        char.style.animationDelay = `${lineIndex * 3 + delay}s`;
+                    });
+                }, lineIndex * 3000); // 每行间隔3秒
+            });
+            
+            // 延迟显示签名和日期
+            setTimeout(() => {
+                document.getElementById('signature').style.opacity = '1';
+                document.getElementById('date').style.opacity = '1';
+                
+                // 创建更多的心形效果
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        createSpecialHeart();
+                    }, i * 100);
+                }
+            }, 40000); // 等待所有文字动画完成后显示
+            
+            // 尝试自动播放音乐（可能被浏览器阻止）
+            setTimeout(() => {
+                music.play().catch(error => {
+                    console.log('自动播放被阻止，请手动点击播放按钮:', error);
+                    // 即使自动播放失败，也保持按钮状态为"暂停"
+                    playPauseBtn.textContent = '暂停';
+                });
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
